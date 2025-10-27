@@ -55,8 +55,9 @@ int parsing_wav(FILE *file, WAV *wav) {
 		wav->file_size = wav->file_size | (((uint32_t)byte) << 8 * i);
 		i++;
 	}
-	/* File size in WAV is minus 8, so we need to add to get original file
-	 * size*/
+	/* File size in WAV is minus 8, so we need to add 8 to get original file
+	 * size
+	 */
 	wav->file_size += 8;
 
 	/* Checking Format bytes */

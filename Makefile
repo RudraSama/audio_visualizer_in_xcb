@@ -10,7 +10,7 @@ SOURCE = audio_visualizer.c
 TARGET = audio_visualizer
 
 $(TARGET) : $(LIBS)
-	$(CXX) $(CLIBS) -o $@ $(SOURCE) $^
+	$(CXX) $(CLIBS) -g -o $@ $(SOURCE) $^
 
 clean:
 	rm audio_visualizer

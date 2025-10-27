@@ -13,11 +13,16 @@
 #include "libs/stb_image.h"
 #include "libs/wav_parser/wav_parser.h"
 
-static const int WIDTH = 600;
+static const int WIDTH = 1024;
 static const int HEIGHT = 600;
-static const uint16_t total_bars = 512 / 12;
-static const uint16_t bar_width = 4;
-static const uint16_t gap = 10;
+
+static const uint32_t sample_size = 1024;
+static const uint16_t smooth_factor = 2;
+
+static const uint16_t total_bars = (sample_size / 2 / smooth_factor);
+static const uint16_t bar_width = 2;
+static const uint16_t gap = 2;
+
 static const uint32_t interval = 23;  // Milliseconds
 
 static const char *device = "default"; /* playback device */
@@ -63,9 +68,6 @@ typedef struct {
 	uint32_t audio_frames_in_time;
 	uint32_t *offset;
 } Arg_Struct;
-
-
-
 
 uint64_t get_milis() {
 	struct timespec ts = {0, 0};
@@ -253,15 +255,12 @@ void create_bar(Pixmap *pixmap, uint16_t start, uint16_t width, uint16_t length,
 
 uint64_t *get_bands(WAV *wav, uint16_t *buffer, uint32_t total_frames,
                     uint32_t offset) {
-	uint32_t sample_size = 1024;
-	uint16_t smooth_factor = 12;
-
 	double complex *samples =
 	    (double complex *)malloc(sizeof(*samples) * sample_size);
 
 	if (samples == NULL) return NULL;
 
-	for (uint32_t i = 0; i < total_frames; i++)
+	for (uint32_t i = 0; i < total_frames && i < sample_size; i++)
 		samples[i] = (double complex)buffer[offset + i];
 
 	for (uint32_t i = total_frames; i < sample_size; i++) samples[i] = 0;
@@ -342,7 +341,7 @@ void *update_pixmap(void *arg) {
 
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
-		printf("Provide WAV file\n");
+		printf("Provide WAV and GIF file\n");
 		return 0;
 	}
 
