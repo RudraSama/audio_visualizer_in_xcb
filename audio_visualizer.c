@@ -144,7 +144,7 @@ int load_gif(const char *filename, GIF *gif) {
 	uint32_t total_bytes = x * comp * y * z;
 
 	if (buffer == NULL) {
-		printf("Could not read GIF file");
+		printf("Could not read GIF file\n");
 		fclose(file);
 		return 0;
 	}
@@ -152,7 +152,7 @@ int load_gif(const char *filename, GIF *gif) {
 	if (x > WIDTH || y > HEIGHT) {
 		printf(
 		    "Width and Height of GIF can't be more than WINDOW's Width and "
-		    "Height'");
+		    "Height'\n");
 		return 0;
 	}
 
@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
 	snd_pcm_t *handle;
 	snd_pcm_sframes_t frames;
 
-	if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+	if ((err = snd_pcm_open(&handle, "hw:2", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		printf("Playback open error: %s\n", snd_strerror(err));
 		exit(EXIT_FAILURE);
 	}
