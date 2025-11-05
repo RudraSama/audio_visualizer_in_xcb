@@ -329,7 +329,7 @@ void *update_pixmap(void *arg) {
         continue;
       }
 
-                        for (uint32_t i = 0; i < total_bars; i++) {
+      for (uint32_t i = 0; i < total_bars; i++) {
 				float new_h =
 				    (float)((uint64_t)band[i] * (uint64_t)HEIGHT / 2 / MAX_AMP);
 				create_bar(arg_struct->pixmap, (arg_struct->bar)[i].position,
