@@ -309,23 +309,27 @@ void *update_pixmap(void *arg) {
 
 	while (atomic_load(&worker_thread_running) > 0) {
 		if (atomic_load(&need_pixmap_update) > 0) {
-			draw_image(arg_struct->pixmap, arg_struct->gif, i);
+      if(arg_struct->gif != NULL){
 
-			uint64_t end = get_milis();
-			if (end - start > (arg_struct->gif)->delay) {
-				i = (i % (N - 1)) + 1;
-				start = get_milis();
-			}
-			uint64_t *band = get_bands(arg_struct->wav, arg_struct->mono_buffer,
-			                           arg_struct->audio_frames_in_time,
-			                           *(arg_struct->offset));
+        draw_image(arg_struct->pixmap, arg_struct->gif, i);
 
-			if (band == NULL) {
-				atomic_store(&need_pixmap_update, 0);
-				continue;
-			}
+        uint64_t end = get_milis();
+        if (end - start > (arg_struct->gif)->delay) {
+          i = (i % (N - 1)) + 1;
+          start = get_milis();
+        }
+      }
 
-			for (uint32_t i = 0; i < total_bars; i++) {
+      uint64_t *band =
+          get_bands(arg_struct->wav, arg_struct->mono_buffer,
+                    arg_struct->audio_frames_in_time, *(arg_struct->offset));
+
+      if (band == NULL) {
+        atomic_store(&need_pixmap_update, 0);
+        continue;
+      }
+
+                        for (uint32_t i = 0; i < total_bars; i++) {
 				float new_h =
 				    (float)((uint64_t)band[i] * (uint64_t)HEIGHT / 2 / MAX_AMP);
 				create_bar(arg_struct->pixmap, (arg_struct->bar)[i].position,
@@ -340,8 +344,8 @@ void *update_pixmap(void *arg) {
 
 
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		printf("Provide WAV and GIF file\n");
+	if (argc < 1) {
+		printf("Provide a WAV file\n");
 		return 0;
 	}
 
@@ -354,7 +358,8 @@ int main(int argc, char *argv[]) {
 	if (get_mono_samples(&wav, &mono_buffer) == 0) return 0;
 
 	GIF gif = {0};
-	if (load_gif(argv[2], &gif) == 0) return 0;
+  if(argv[2] != NULL)
+	  if (load_gif(argv[2], &gif) == 0) return 0;
 
 	xcb_connection_t *conn = xcb_connect(NULL, NULL);
 	xcb_screen_t *screen = xcb_setup_roots_iterator(xcb_get_setup(conn)).data;
