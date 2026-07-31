@@ -8,7 +8,7 @@
 
 #define PI 3.14159265358979323846
 
-void _fft(double complex *x, unsigned int N, double complex *result);
+int _fft(double complex *x, unsigned int N, double complex *result);
 double complex *fft(double complex *x, unsigned int N);
 
 #endif
